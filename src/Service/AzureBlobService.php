@@ -8,6 +8,23 @@ use MicrosoftAzure\Storage\Blob\Models\ContainerACL;
 use MicrosoftAzure\Storage\Blob\Models\SetBlobPropertiesOptions;
 use Psr\Http\Message\UploadedFileInterface;
 
+$blobRestProxy = BlobRestProxy::createBlobService(DefaultEndpointsProtocol=https;AccountName=fypblobstorage1;AccountKey=Vyw5XU83SgGmQurAbrMcjGjPvmzoIeKP2e9KtUg3ZmEt6GqsCYZeQBpyOixej5h40Djzp5WQzd66+AStD/tnTA==;EndpointSuffix=core.windows.net);
+$uniqueIdentifier = Uuid::uuid4(); //generate a unique identifier
+$blockId = base64_encode(urlencode($uniqueIdentifier));
+// To the upload, as kind-off documented in the code sample.
+$result = $blobRestProxy->createBlobBlock(
+    'fileupload',
+    'test.json',
+    $blockId,
+    json_encode(["test" => "OK"])
+);
+// Commit the code block you just uploaded.
+$blobRestProxy->commitBlobBlocks(
+    $this->azureBlobStoragePilesContainerName,
+    $path,
+   [new Block($blockId, 'Uncommitted')]
+);
+
 class AzureBlobService
 {
     public const ACL_NONE = '';
